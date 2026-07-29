@@ -6,7 +6,7 @@ import {
   ExternalLink, Rocket, CheckCircle2, Clock, Mail, 
   Linkedin, Instagram, PenTool, Sparkles, Terminal,
   Film, Star, Video, Code2, ArrowLeft, Github, User,
-  Code, Coffee
+  Code, Coffee, Home
 } from 'lucide-react';
 
 export default function App() {
@@ -61,6 +61,8 @@ export default function App() {
   useEffect(() => {
     setScrollProgress(0);
     window.scrollTo(0, 0);
+    // Portfolio needs tall scroll space (8 stations); Reels only needs 3 stations
+    document.body.style.height = activeView === 'reels' ? '450vh' : '800vh';
   }, [activeView]);
 
   // Main Portfolio 3D card transform (8 stations: 0–7, peaks evenly at 0/7, 1/7, … 7/7)
@@ -86,9 +88,9 @@ export default function App() {
     };
   };
 
-  // Creative Reels 3D card transform (3 stations peak at 0.0, 0.50, 1.0)
+  // Creative Reels 3D card transform (3 stations: peaks at 0.0, 0.4, 0.8 — fits within 450vh)
   const getReelsCardTransform = (stationIndex) => {
-    const peak = stationIndex * 0.5;
+    const peak = stationIndex * 0.4;
     const diff = scrollProgress - peak;
 
     const transZ = -diff * 2200; 
@@ -97,7 +99,7 @@ export default function App() {
     const rotY = diff * 45;      
     const rotX = diff * 20;      
 
-    const opacity = Math.max(0, 1 - Math.abs(diff) * 5.5);
+    const opacity = Math.max(0, 1 - Math.abs(diff) * 8);
     const isVisible = opacity > 0.05;
 
     return {
@@ -182,7 +184,7 @@ export default function App() {
                 <div className="about-photo-wrapper">
                   <div className="retro-photo-comic-frame">
                     <img 
-                      src="public/assets/profileimg.jpeg" 
+                      src="/assets/profileimg.jpeg" 
                       alt="Player 01 Avatar" 
                       className="retro-photo-img" 
                     />
@@ -430,6 +432,20 @@ export default function App() {
                   </div>
                 </a>
               </div>
+
+              {/* Back to About Me button */}
+              <div style={{ marginTop: '30px', textAlign: 'center' }}>
+                <button
+                  className="comic-btn btn-cyan"
+                  onClick={() => {
+                    playSound('click');
+                    const total = document.documentElement.scrollHeight - window.innerHeight;
+                    window.scrollTo({ top: (1 / 7) * total, behavior: 'smooth' });
+                  }}
+                >
+                  <Home size={16} /> BACK TO ABOUT ME
+                </button>
+              </div>
             </div>
           </div>
 
@@ -589,6 +605,16 @@ export default function App() {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Back to Portfolio button on last reel */}
+            <div style={{ marginTop: '25px', textAlign: 'center' }}>
+              <button
+                className="comic-btn btn-cyan"
+                onClick={() => { playSound('click'); setActiveView('portfolio'); }}
+              >
+                <Home size={16} /> BACK TO PORTFOLIO
+              </button>
             </div>
           </div>
 
